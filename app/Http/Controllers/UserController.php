@@ -31,8 +31,8 @@ class UserController extends Controller
     public function list(Request $request)
     {
         $users = UserModel::select('user_id', 'username', 'nama', 'level_id')
-            ->with('level')
-            ->get();
+            ->with('level');
+
 
         //filter data user berdasarkan level_id
         if ($request->level_id) {
@@ -173,7 +173,6 @@ public function update(Request $request, string $id)
             return redirect('/user')->with('error', 'Data user gagal dihapus');
         }
     }
-
 }
 
 
