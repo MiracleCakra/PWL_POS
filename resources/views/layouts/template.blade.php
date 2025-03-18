@@ -24,6 +24,10 @@
     <script src="{{ asset('adminlte/plugins/sweetalert2/sweetalert2.min.js') }}"></script>
     <!-- Theme style -->
     <link rel="stylesheet" href="{{ asset('adminlte/dist/css/adminlte.min.css') }}">
+    <!-- Di dalam bagian head template.blade.php -->
+<!-- SweetAlert2 -->
+<link rel="stylesheet" href="{{ asset('adminlte/plugins/sweetalert2/sweetalert2.min.css') }}">
+
 
     @stack('css') <!--Digunakan untuk memanggil custom css dari perintah push('css') pada masing masing view-->
 </head>
@@ -65,6 +69,11 @@
 
 <!-- jQuery -->
 <script src="{{ asset('adminlte/plugins/jquery/jquery.min.js') }}"></script>
+<!-- Letakkan SweetAlert2 setelah jQuery -->
+<script src="{{ asset('adminlte/plugins/jquery/jquery.min.js') }}"></script>
+<script src="{{ asset('adminlte/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+<!-- ... -->
+<script src="{{ asset('adminlte/plugins/sweetalert2/sweetalert2.min.js') }}"></script>
 
 <!-- Bootstrap -->
 <script src="{{ asset('adminlte/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
@@ -86,6 +95,10 @@
 <!-- jquery-validation -->
 <script src="{{ asset('adminlte/plugins/jquery-validation/jquery.validate.min.js') }}"></script>
 <script src="{{ asset('adminlte/plugins/jquery-validation/additional-methods.min.js') }}"></script>
+
+<!-- Di bagian bawah template.blade.php sebelum AdminLTE script -->
+<!-- SweetAlert2 -->
+<script src="{{ asset('adminlte/plugins/sweetalert2/sweetalert2.min.js') }}"></script>
 
 <!-- AdminLTE App -->
 <script src="{{ asset('adminlte/dist/js/adminlte.min.js') }}"></script>
