@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class LevelModel extends Model
 {
@@ -14,7 +14,7 @@ class LevelModel extends Model
 
     protected $fillable = ['level_id', 'level_kode', 'level_nama']; // Perbaikan level_code -> level_kode
 
-    public function user(): HasOne
+    public function user(): HasMany
     {
         return $this->hasOne(UserModel::class, 'level_id', 'level_id');
     }
