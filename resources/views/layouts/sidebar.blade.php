@@ -49,9 +49,9 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a href="{{ url('/supplier') }}" class="nav-link {{ $activeMenu == 'supplier' ? 'active' : '' }}">
+                <a href="{{ url('/suplier') }}" class="nav-link {{ $activeMenu == 'suplier' ? 'active' : '' }}">
                     <i class="nav-icon fas fa-truck"></i>
-                    <p>Data Supplier</p>
+                    <p>Data Suplier</p>
                 </a>
             </li>
 
@@ -70,4 +70,32 @@
             </li>
         </ul>
     </nav>
+
+    <!-- Logout Button -->
+    <br><br>
+    <div class="mt-4 mb-3 text-center">
+        <a href="javascript:void(0);" class="btn btn-danger btn-block" id="logout-btn">
+            <i class="fas fa-sign-out-alt"></i> Logout
+        </a>
+    </div>
 </div>
+<script>
+    document.getElementById("logout-btn").addEventListener("click", function(event) {
+        event.preventDefault();
+
+        Swal.fire({
+            title: "Yakin ingin keluar dari akun Anda?",
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonColor: "#007bff",
+            cancelButtonColor: "#6c757d",
+            confirmButtonText: "Ya, Keluar",
+            cancelButtonText: "Tidak, Tetap Masuk"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // akan Redirect ke logout
+                window.location.href = "{{ route('logout') }}";
+            }
+        });
+    });
+</script>
