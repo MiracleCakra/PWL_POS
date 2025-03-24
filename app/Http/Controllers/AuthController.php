@@ -46,5 +46,34 @@ class AuthController extends Controller
         $request->session()->regenerateToken();
         return redirect('login');
         }
+        public function register(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'username' => 'required|min:4|max:20|unique:m_user,username',
+            'nama' => 'required|min:4|max:20',
+            'password' => 'required|min:5|max:20|confirmed',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'msgField' => $validator->errors(),
+                'message' => 'Periksa kembali input Anda!',
+            ]);
+        }
+
+        $user = \App\Models\UserModel::create([
+            'username' => $request->username,
+            'nama' => $request->nama,
+            'password' => bcrypt($request->password),
+            'level_id' => 3,
+        ]);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Registrasi berhasil!',
+            'redirect' => route('login'),
+        ]);
     }
+}
 

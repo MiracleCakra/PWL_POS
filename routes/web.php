@@ -24,8 +24,8 @@ Route::get('/register', function () {
 // Proses registrasi
 Route::post('/register', [AuthController::class, 'register'])->name('register.post');
 
-Route::middleware(['auth'])->group(function () { //login dulu sebelum akses route dibawah
-    // Routes for dashboard (welcome.blade.php)
+Route::middleware(['auth'])->group(function () {
+
     Route::get('/', [WelcomeController::class, 'index']);
 });
 
