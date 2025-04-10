@@ -98,7 +98,7 @@ Route::middleware(['auth', 'authorize:ADM,MNG'])->group(function () {
         Route::get('/', [KategoriController::class, 'index']);
         Route::get('/list', [KategoriController::class, 'list']);
         Route::get('/create', [KategoriController::class, 'create']);
-        Route::post('/', [KategoriController::class, 'store']); // Sudah ada
+        Route::post('/', [KategoriController::class, 'store']);
         Route::get('/create_ajax', [KategoriController::class, 'create_ajax']);
         Route::post('/ajax', [KategoriController::class, 'store_ajax'])->withoutMiddleware('auth');
         Route::get('/{id}/show', [KategoriController::class, 'show']);
@@ -111,23 +111,40 @@ Route::middleware(['auth', 'authorize:ADM,MNG'])->group(function () {
     });
 
 // Route Supplier
+//     Route::group(['prefix' => 'supplier'], function () {
+//     Route::get('/', [SupplierController::class, 'index']);
+//     Route::post('/list', [SupplierController::class, 'list']);
+//     Route::get('/create', [SupplierController::class, 'create']);
+//     Route::post('/', [SupplierController::class, 'store']);
+//     Route::get('/create_ajax', [SupplierController::class, 'create_ajax']);
+//     Route::post('/ajax', [SupplierController::class, 'store_ajax']);
+//     Route::get('/{id}', [SupplierController::class, 'show']);
+//     Route::get('/{id}/show_ajax', [SupplierController::class, 'show_ajax']);
+//     Route::get('/{id}/edit', [SupplierController::class, 'edit']);
+//     Route::put('/{id}', [SupplierController::class, 'update']);
+//     Route::get('/{id}/edit_ajax',  [SupplierController::class, 'edit_ajax']);
+//     Route::put('/{id}/update_ajax', [SupplierController::class, 'update_ajax']);
+//     Route::delete('/{id}', [SupplierController::class, 'destroy']);
+//     Route::get('/{id}/delete_ajax', [SupplierController::class, 'confirm_ajax']);
+//     Route::delete('/{id}/delete_ajax', [SupplierController::class, 'delete_ajax']);
+// });
+
+    // Route Supplier
     Route::group(['prefix' => 'supplier'], function () {
-    Route::get('/', [SupplierController::class, 'index']);
-    Route::post('/list', [SupplierController::class, 'list']);
-    Route::get('/create', [SupplierController::class, 'create']);
-    Route::post('/', [SupplierController::class, 'store']);
-    Route::get('/create_ajax', [SupplierController::class, 'create_ajax']);
-    Route::post('/ajax', [SupplierController::class, 'store_ajax']);
-    Route::get('/{id}', [SupplierController::class, 'show']);
-    Route::get('/{id}/show_ajax', [SupplierController::class, 'show_ajax']);
-    Route::get('/{id}/edit', [SupplierController::class, 'edit']);
-    Route::put('/{id}', [SupplierController::class, 'update']);
-    Route::get('/{id}/edit_ajax',  [SupplierController::class, 'edit_ajax']);
-    Route::put('/{id}/update_ajax', [SupplierController::class, 'update_ajax']);
-    Route::delete('/{id}', [SupplierController::class, 'destroy']);
-    Route::get('/{id}/delete_ajax', [SupplierController::class, 'confirm_ajax']);
-    Route::delete('/{id}/delete_ajax', [SupplierController::class, 'delete_ajax']);
-});
+        Route::get('/', [SupplierController::class, 'index']);
+        Route::get('/list', [SupplierController::class, 'list']);
+        Route::post('/', [SupplierController::class, 'store']);
+        Route::get('/create_ajax', [SupplierController::class, 'create_ajax']);
+        Route::post('/ajax', [SupplierController::class, 'store_ajax']);
+        Route::get('/{id}/show', [SupplierController::class, 'show']);
+        Route::get('/{id}/edit_ajax', [SupplierController::class, 'edit_ajax']);
+        Route::put('/{id}/update_ajax', [SupplierController::class, 'update_ajax']);
+        Route::get('/{id}/delete_ajax', [SupplierController::class, 'confirm_ajax']);
+        Route::delete('/{id}/delete_ajax', [SupplierController::class, 'delete_ajax']);
+        Route::get('/import', [SupplierController::class, 'import']); // ajax form upload excel
+        Route::post('/import_ajax', [SupplierController::class, 'import_ajax']); // ajax import excel
+    });
+
 
 // // Route Barang
 // Route::group(['prefix' => 'barang'], function () {
