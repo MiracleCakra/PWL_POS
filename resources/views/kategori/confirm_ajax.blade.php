@@ -3,13 +3,14 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Kesalahan</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                        aria-hidden="true">&times;</span></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
             <div class="modal-body">
                 <div class="alert alert-danger">
                     <h5><i class="icon fas fa-ban"></i> Kesalahan!!!</h5>
-                    Data yang anda cari tidak ditemukan
+                    Data kategori yang Anda cari tidak ditemukan.
                 </div>
                 <a href="{{ url('/kategori') }}" class="btn btn-warning">Kembali</a>
             </div>
@@ -22,22 +23,23 @@
         <div id="modal-master" class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Hapus Data Kategori</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                            aria-hidden="true">&times;</span></button>
+                    <h5 class="modal-title" id="exampleModalLabel">Hapus Data kategori</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
                 <div class="modal-body">
                     <div class="alert alert-warning">
                         <h5><i class="icon fas fa-ban"></i> Konfirmasi !!!</h5>
-                        Apakah Anda ingin menghapus data seperti di bawah ini?
+                        Apakah Anda ingin menghapus data kategori berikut?
                     </div>
                     <table class="table table-sm table-bordered table-striped">
                         <tr>
-                            <th class="text-right col-3">Kode :</th>
+                            <th class="text-right col-3">Kode kategori :</th>
                             <td class="col-9">{{ $kategori->kategori_kode }}</td>
                         </tr>
                         <tr>
-                            <th class="text-right col-3">Nama :</th>
+                            <th class="text-right col-3">Nama kategori :</th>
                             <td class="col-9">{{ $kategori->kategori_nama }}</td>
                         </tr>
                     </table>
@@ -66,7 +68,7 @@
                                     title: 'Berhasil',
                                     text: response.message
                                 });
-                                dataKategori.ajax.reload();
+                                tableKategori.ajax.reload();
                             } else {
                                 $('.error-text').text('');
                                 $.each(response.msgField, function(prefix, val) {

@@ -76,21 +76,38 @@ Route::middleware(['auth', 'authorize:ADM,MNG'])->group(function () {
 // });
 
 // Route Kategori
-        Route::group(['prefix' => 'kategori'], function () {
-        Route::get('/', [KategoriController::class, 'index'])->name('kategori.index');
-        Route::post('/list', [KategoriController::class, 'list'])->name('kategori.list');
-        Route::get('/create', [KategoriController::class, 'create'])->name('kategori.create');
-        Route::post('/', [KategoriController::class, 'store'])->name('kategori.store');
-        Route::get('/create_ajax', [KategoriController::class, 'create_ajax'])->name('kategori.create_ajax');
-        Route::post('ajax', [KategoriController::class, 'store_ajax'])->name('kategori.ajax');
-        Route::get('/{id}', [KategoriController::class, 'show'])->name('kategori.show');
-        Route::get('/{id}/edit', [KategoriController::class, 'edit'])->name('kategori.edit');
-        Route::put('/{id}', [KategoriController::class, 'update'])->name('kategori.update');
-        Route::get('/{id}/edit_ajax', [KategoriController::class, 'edit_ajax'])->name('kategori.edit_ajax');
-        Route::put('/{id}/update_ajax', [KategoriController::class, 'update_ajax'])->name('kategori.update_ajax');
+    //     Route::group(['prefix' => 'kategori'], function () {
+    //     Route::get('/', [KategoriController::class, 'index'])->name('kategori.index');
+    //     Route::post('/list', [KategoriController::class, 'list'])->name('kategori.list');
+    //     Route::get('/create', [KategoriController::class, 'create'])->name('kategori.create');
+    //     Route::post('/', [KategoriController::class, 'store'])->name('kategori.store');
+    //     Route::get('/create_ajax', [KategoriController::class, 'create_ajax'])->name('kategori.create_ajax');
+    //     Route::post('ajax', [KategoriController::class, 'store_ajax'])->name('kategori.ajax');
+    //     Route::get('/{id}', [KategoriController::class, 'show'])->name('kategori.show');
+    //     Route::get('/{id}/edit', [KategoriController::class, 'edit'])->name('kategori.edit');
+    //     Route::put('/{id}', [KategoriController::class, 'update'])->name('kategori.update');
+    //     Route::get('/{id}/edit_ajax', [KategoriController::class, 'edit_ajax'])->name('kategori.edit_ajax');
+    //     Route::put('/{id}/update_ajax', [KategoriController::class, 'update_ajax'])->name('kategori.update_ajax');
+    //     Route::get('/{id}/delete_ajax', [KategoriController::class, 'confirm_ajax']);
+    //     Route::delete('/{id}/delete_ajax', [KategoriController::class, 'delete_ajax']);
+    //     Route::delete('/{id}', [KategoriController::class, 'destroy'])->name('kategori.destroy');
+    // });
+
+    // Route Kategori
+    Route::group(['prefix' => 'kategori'], function () {
+        Route::get('/', [KategoriController::class, 'index']);
+        Route::get('/list', [KategoriController::class, 'list']);
+        Route::get('/create', [KategoriController::class, 'create']);
+        Route::post('/', [KategoriController::class, 'store']); // Sudah ada
+        Route::get('/create_ajax', [KategoriController::class, 'create_ajax']);
+        Route::post('/ajax', [KategoriController::class, 'store_ajax'])->withoutMiddleware('auth');
+        Route::get('/{id}/show', [KategoriController::class, 'show']);
+        Route::get('/{id}/edit_ajax', [KategoriController::class, 'edit_ajax']);
+        Route::put('/{id}/update_ajax', [KategoriController::class, 'update_ajax']);
         Route::get('/{id}/delete_ajax', [KategoriController::class, 'confirm_ajax']);
         Route::delete('/{id}/delete_ajax', [KategoriController::class, 'delete_ajax']);
-        Route::delete('/{id}', [KategoriController::class, 'destroy'])->name('kategori.destroy');
+        Route::get('/import', [KategoriController::class, 'import']); // ajax form upload excel
+        Route::post('/import_ajax', [KategoriController::class, 'import_ajax']); // ajax import excel
     });
 
 // Route Supplier
