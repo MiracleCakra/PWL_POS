@@ -5,6 +5,7 @@
         <div class="card-header">
             <h3 class="card-title">{{ $page->title }}</h3>
             <div class="card-tools">
+                <button onclick="modalAction('{{ url('/user/import') }}')" class="btn btn-info">Import User</button>
                 <a class="btn btn-sm btn-primary mt-1" href="{{ url('user/create') }}">Tambah</a>
                 <button onclick="modalAction('{{ url('user/create_ajax') }}')" class="btn btn-sm btn-success mt-1">Tambah
                     Ajax</button>
@@ -36,7 +37,7 @@
             <table class="table table-bordered table-striped table-hover table-sm" id="table_user">
                 <thead>
                     <tr>
-                        <th>ID</th>
+                        <th>No</th>
                         <th>Username</th>
                         <th>Nama</th>
                         <th>Level Pengguna</th>
@@ -60,8 +61,9 @@
                 $('#myModal').modal('show');
             });
         }
+        var tableUser;
         $(document).ready(function() {
-            var dataUser = $('#table_user').DataTable({
+            tableUser = $('#table_user').DataTable({
                 // serverSide: true, jika ingin menggunakan server side processing
                 serverSide: true,
                 ajax: {
@@ -108,7 +110,7 @@
             });
 
             $('#level_id').on('change', function() {
-                dataUser.ajax.reload();
+                tableUser.ajax.reload();
             });
 
         });

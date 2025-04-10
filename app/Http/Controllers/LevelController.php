@@ -6,10 +6,12 @@ use App\Models\LevelModel;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class LevelController extends Controller
 {
-    // melihat halaman awal level
+    // Menampilkan halaman awal level
     public function index()
     {
         $breadcrumb = (object) [
@@ -21,7 +23,7 @@ class LevelController extends Controller
             'title' => 'Daftar level yang terdaftar dalam sistem'
         ];
 
-        $activeMenu = 'level';
+        $activeMenu = 'level'; // Set menu yang sedang aktif
 
         return view('level.index', [
             'breadcrumb' => $breadcrumb,
@@ -30,7 +32,7 @@ class LevelController extends Controller
         ]);
     }
 
-    // melihat halaman form tambah level
+    // Menampilkan halaman form tambah level
     public function create()
     {
         $breadcrumb = (object) [
@@ -42,7 +44,7 @@ class LevelController extends Controller
             'title' => 'Tambah level baru'
         ];
 
-        $activeMenu = 'level';
+        $activeMenu = 'level'; // set menu yang sedang aktif
 
         return view('level.create', [
             'breadcrumb' => $breadcrumb,
@@ -51,12 +53,12 @@ class LevelController extends Controller
         ]);
     }
 
-    // simpan data level baru
+    // Menyimpan data level baru
     public function store(Request $request)
     {
         $request->validate([
-            'level_kode' => 'required|string|max:10|unique:m_level,level_kode',
-            'level_nama' => 'required|string|max:100',
+            'level_kode' => 'required|string|max:10|unique:m_level,level_kode', // Kode level harus unik
+            'level_nama' => 'required|string|max:100', // Nama level wajib diisi dengan maksimal 100 karakter
         ]);
 
         LevelModel::create([
@@ -67,7 +69,7 @@ class LevelController extends Controller
         return redirect('/level')->with('success', 'Data level berhasil disimpan');
     }
 
-    // melihat detail level
+    // Menampilkan detail level
     public function show($id)
     {
         $level = LevelModel::find($id);
@@ -85,7 +87,7 @@ class LevelController extends Controller
             'title' => 'Detail level'
         ];
 
-        $activeMenu = 'level';
+        $activeMenu = 'level'; // Set menu yang sedang aktif
 
         return view('level.levelShow', [
             'level' => $level,
@@ -95,7 +97,7 @@ class LevelController extends Controller
         ]);
     }
 
-    // melihat halaman form edit level
+    // Menampilkan halaman form edit level
     public function edit(string $id)
     {
         $level = LevelModel::find($id);
@@ -109,7 +111,7 @@ class LevelController extends Controller
             "title" => "Edit level"
         ];
 
-        $activeMenu = 'level';
+        $activeMenu = 'level'; // set menu yang sedang aktif
 
         return view('level.edit', [
             'breadcrumb' => $breadcrumb,
@@ -119,12 +121,13 @@ class LevelController extends Controller
         ]);
     }
 
-    // simpan perubahan data level
+    // Menyimpan perubahan data level
     public function update(Request $request, string $id)
     {
         $request->validate([
             'level_kode' => 'required|string|max:10|unique:m_level,level_kode,' . $id . ',level_id',
-            'level_nama' => 'required|string|max:100',
+            // kode level harus diisi, berupa string, dan bernilai unik kecuali untuk level dengan id yang sedang diedit
+            'level_nama' => 'required|string|max:100', // nama level harus diisi, berupa string, dan maksimal 100 karakter
         ]);
 
         LevelModel::find($id)->update([
@@ -135,11 +138,11 @@ class LevelController extends Controller
         return redirect('/level')->with('success', 'Data level berhasil diubah');
     }
 
-    // hapus data level
+    // Menghapus data level
     public function destroy(string $id)
     {
         $check = LevelModel::find($id);
-        if (!$check) {      //cek apakah data level akan dihapus ada atau tidak
+        if (!$check) {      //untuk mengecek apakah data level yang akan dihapus ada atau tidak
             return redirect('/level')->with('error', 'Data level tidak ditemukan');
         }
         try {
@@ -268,6 +271,69 @@ class LevelController extends Controller
                 return response()->json([
                     'status' => false,
                     'message' => 'Data tidak ditemukan'
+                ]);
+            }
+        }
+        return redirect('/level');
+    }
+
+    public function import()
+    {
+        return view('level.importLevel');
+    }
+
+    //import ajax
+    public function import_ajax(Request $request)
+    {
+        if ($request->ajax() || $request->wantsJson()) {
+            $rules = [
+                // validasi file harus xls atau xlsx, max 1MB
+                'file_level' => ['required', 'mimes:xlsx', 'max:1024']
+            ];
+
+            $validator = Validator::make($request->all(), $rules);
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Validasi Gagal',
+                    'msgField' => $validator->errors()
+                ]);
+            }
+
+            $file = $request->file('file_level');  // ambil file dari request
+
+            $reader = IOFactory::createReader('Xlsx');  // load reader file excel
+            $reader->setReadDataOnly(true);             // hanya membaca data
+            $spreadsheet = $reader->load($file->getRealPath()); // load file excel
+            $sheet = $spreadsheet->getActiveSheet();    // ambil sheet yang aktif
+
+            $data = $sheet->toArray(null, false, true, true);   // ambil data excel
+
+            $insert = [];
+            if (count($data) > 1) { // apabila data lebih dari 1 baris
+                foreach ($data as $baris => $value) {
+                    if ($baris > 1) { // apabila baris ke 1 adalah header, maka akan langsung terlewat
+                        $insert[] = [
+                            'level_kode' => $value['A'],
+                            'level_nama' => $value['B'],
+                            'created_at' => now(),
+                        ];
+                    }
+                }
+
+                if (count($insert) > 0) {
+                    // insert data ke database, jika data sudah ada, maka diabaikan
+                    LevelModel::insertOrIgnore($insert);
+                }
+
+                return response()->json([
+                    'status' => true,
+                    'message' => 'Data berhasil diimport'
+                ]);
+            } else {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Tidak ada data yang diimport'
                 ]);
             }
         }

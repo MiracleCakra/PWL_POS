@@ -5,6 +5,8 @@
         <div class="card-header">
             <h3 class="card-title">{{ $page->title }}</h3>
             <div class="card-tools">
+                <button onclick="modalAction('{{ url('/level/import') }}')" class="btn btn-info btn-sm mt-1">Import
+                    Kategori</button>
                 <a class="btn btn-sm btn-primary mt-1" href="{{ url('level/create') }}">Tambah</a>
                 <button onclick="modalAction('{{ url('level/create_ajax') }}')" class="btn btn-sm btn-success mt-1">
                     Tambah Ajax
@@ -47,13 +49,17 @@
             });
         }
 
+        var tableLevel;
         $(document).ready(function() {
-            var dataLevel = $('#table_level').DataTable({
+            tableLevel = $('#table_level').DataTable({
                 serverSide: true,
                 ajax: {
                     "url": "{{ url('level/list') }}",
                     "dataType": "json",
-                    "type": "GET"
+                    "type": "GET",
+                    "data": function(d) {
+                        d.filter_level = $('.filter_level').val();
+                    }
                 },
                 columns: [{
                         data: "DT_RowIndex",
@@ -80,6 +86,14 @@
                         searchable: false
                     }
                 ]
+            });
+            $('#table_level_filter input').unbind().bind().on('keyup', function(e) {
+                if (e.keyCode == 13) { // enter key
+                    tableLevel.search(this.value).draw();
+                }
+            });
+            $('.filter_level').change(function() {
+                tableLevel.draw();
             });
         });
     </script>
