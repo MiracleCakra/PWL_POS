@@ -406,4 +406,73 @@ class UserController extends Controller
         }
         return redirect('/user');
     }
+
+    //fungsi export
+    public function export_excel()
+    {
+        //ambil data user
+        $user = UserModel::select(
+            'user_id',
+            'level_id',
+            'username',
+            'nama',
+            'password',
+        )
+            ->orderBy('user_id')
+            ->with('level')
+            ->get();
+
+        //load excel
+        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        //set header
+        $sheet->setCellValue('A1', 'No');
+        $sheet->setCellValue('B1', 'ID User');
+        $sheet->setCellValue('C1', 'Username');
+        $sheet->setCellValue('D1', 'Nama User');
+        $sheet->setCellValue('E1', 'Password');
+        $sheet->setCellValue('F1', 'Level');
+
+        $sheet->getStyle('A1:F1')->getFont()->setBold(true); ///bold header
+
+        // looping data dari database
+        $no = 1;        // nomor data dimulai dari 1
+        $baris = 2;     // baris data dimulai dari baris ke 2
+        foreach ($user as $key => $value) {
+            $sheet->setCellValue('A'.$baris, $no);
+            $sheet->setCellValue('B'.$baris, $value->user_id);
+            $sheet->setCellValue('C'.$baris, $value->username);
+            $sheet->setCellValue('D'.$baris, $value->nama);
+            $sheet->setCellValue('E'.$baris, $value->password);
+            $sheet->setCellValue('F'.$baris, $value->level->level_nama); // ambil nama level
+            $baris++;
+            $no++;
+        }
+
+
+        //set lebar kolom
+        foreach (range('A', 'F') as $columnID) {
+            $sheet->getColumnDimension($columnID)->setAutoSize(true); //set autosize
+        }
+
+        //set judul file
+        $sheet->setTitle('Data User'); // set title sheet
+
+        $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+        $filename = 'Data User ' . date(format: 'Y-m-d H:i:s') . '.xlsx';
+
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="' . $filename . '"');
+        header('Cache-Control: max-age=0');
+        header('Cache-Control: max-age=1');
+        header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+        header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
+        header('Cache-Control: cache, must-revalidate');
+        header('Pragma: public');
+
+        $writer->save('php://output');
+        exit;
+
+    } // end function export_excel
 }

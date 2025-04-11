@@ -7,7 +7,7 @@
             <div class="card-tools">
                 <button onclick="modalAction('{{ url('/level/import') }}')" class="btn btn-info btn-sm mt-1">Import
                     Kategori</button>
-                <a class="btn btn-sm btn-primary mt-1" href="{{ url('level/create') }}">Tambah</a>
+                    <a href="{{ url('/level/export_excel') }}" class="btn btn-primary"><i class="fa fa-file excel"></i> ExportLevel</a>
                 <button onclick="modalAction('{{ url('level/create_ajax') }}')" class="btn btn-sm btn-success mt-1">
                     Tambah Ajax
                 </button>

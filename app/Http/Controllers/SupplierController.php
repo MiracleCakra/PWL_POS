@@ -332,4 +332,68 @@ class SupplierController extends Controller
         }
         return redirect('/supplier');
     }
+
+    //fungsi export
+    public function export_excel()
+    {
+        //ambil data supplier
+        $supplier = SupplierModel::select(
+            'supplier_id',
+            'nama_supplier',
+            'kontak',
+            'alamat',
+        )
+            ->orderBy('supplier_id')
+            ->get();
+
+        // load excel
+        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        // set header
+        $sheet->setCellValue('A1', 'No');
+        $sheet->setCellValue('B1', 'ID supplier');
+        $sheet->setCellValue('C1', 'Nama supplier');
+        $sheet->setCellValue('D1', 'Kontak');
+        $sheet->setCellValue('E1', 'Alamat');
+
+        $sheet->getStyle('A1:E1')->getFont()->setBold(true); ///bold header
+
+        // looping data dari database
+        $no = 1;        // nomor data dimulai dari 1
+        $baris = 2;     // baris data dimulai dari baris ke 2
+        foreach ($supplier as $key => $value) {
+            $sheet->setCellValue('A'.$baris, $no);
+            $sheet->setCellValue('B'.$baris, $value->supplier_id);
+            $sheet->setCellValue('C'.$baris, $value->nama_supplier);
+            $sheet->setCellValue('D'.$baris, $value->kontak);
+            $sheet->setCellValue('E'.$baris, $value->alamat); // ambil alamat supplier
+            $baris++;
+            $no++;
+        }
+
+        //set lebar kolom
+        foreach (range('A', 'E') as $columnID) {
+            $sheet->getColumnDimension($columnID)->setAutoSize(true); //set autosize
+        }
+
+        //set judul file
+        $sheet->setTitle('Data Supplier'); // set title sheet
+
+        $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+        $filename = 'Data Supplier ' . date(format: 'Y-m-d H:i:s') . '.xlsx';
+
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="' . $filename . '"');
+        header('Cache-Control: max-age=0');
+        header('Cache-Control: max-age=1');
+        header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+        header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
+        header('Cache-Control: cache, must-revalidate');
+        header('Pragma: public');
+
+        $writer->save('php://output');
+        exit;
+
+    } // end function export excel
 }
