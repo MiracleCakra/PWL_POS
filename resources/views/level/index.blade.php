@@ -5,9 +5,9 @@
         <div class="card-header">
             <h3 class="card-title">{{ $page->title }}</h3>
             <div class="card-tools">
-                <button onclick="modalAction('{{ url('/level/import') }}')" class="btn btn-info btn-sm mt-1">Import
-                    Kategori</button>
-                    <a href="{{ url('/level/export_excel') }}" class="btn btn-primary"><i class="fa fa-file excel"></i> ExportLevel</a>
+                <button onclick="modalAction('{{ url('/level/import') }}')" class="btn btn-info btn-sm mt-1">Import Kategori</button>
+                    <a href="{{ url('/level/export_excel') }}" class="btn btn-primary"><i class="fa fa-file excel"></i> Export Level Excel</a>
+                    <a href="{{ url('/level/export_pdf') }}" class="btn btn-danger"><i class="fa fa-file pdf"></i> Export Level PDF</a>
                 <button onclick="modalAction('{{ url('level/create_ajax') }}')" class="btn btn-sm btn-success mt-1">
                     Tambah Ajax
                 </button>

@@ -8,7 +8,7 @@ use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use PhpOffice\PhpSpreadsheet\IOFactory;
-
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class SupplierController extends Controller
 {
@@ -396,4 +396,20 @@ class SupplierController extends Controller
         exit;
 
     } // end function export excel
+
+    //fungsi export pdf
+    public function export_pdf()
+    {
+        $supplier = SupplierModel::orderBy('supplier_id')
+            ->orderBy('supplier_id')
+            ->get();
+
+        //use Barryvdh\DomPDF\Facade\Pdf;
+        $pdf = PDF::loadview('supplier.export_pdf', ['supplier' => $supplier]);
+        $pdf->setPaper('a4', 'potrait');
+        $pdf->setOption("isRemoteEnabled", true);
+        $pdf->render();
+
+        return $pdf->download('Data supplier ' . date('Y-m-d H:i:s') . '.pdf');
+    }
 }
