@@ -1,21 +1,21 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class LevelModel extends Model
 {
-    protected $table = 'm_level'; // Nama tabel dalam database
-    protected $primaryKey = 'level_id'; // Nama primary key
+    protected $table = 'm_level';
+    protected $primaryKey = 'level_id';
+    public $timestamps = false;
 
-    public $timestamps = false; // Matikan timestamps jika tidak ada created_at & updated_at
+    protected $fillable = ['level_kode', 'level_nama'];
 
-    protected $fillable = ['level_id', 'level_kode', 'level_nama']; // Perbaikan level_code -> level_kode
-
-    public function user(): HasMany
+    // Pilih salah satu relasi sesuai kebutuhan
+    public function users(): HasMany
     {
-        return $this->hasOne(UserModel::class, 'level_id', 'level_id');
+        return $this->hasMany(UserModel::class, 'level_id', 'level_id');
     }
 }
