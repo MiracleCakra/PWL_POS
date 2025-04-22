@@ -93,8 +93,8 @@
                                 <div class="col-6 text-center border-right">
                                     {{-- Foto saat ini --}}
                                     <p class="text-muted mb-2">Foto Saat Ini</p>
-                                    @if (auth()->user()->photo)
-                                        <img src="{{ asset('storage/profile/' . auth()->user()->photo) }}"
+                                    @if (auth()->user()->foto_profil)
+                                        <img src="{{ asset('storage/profile/' . auth()->user()->foto_profil) }}"
                                             class="img-circle elevation-2" alt="Current Avatar" width="120"
                                             height="120">
                                     @else

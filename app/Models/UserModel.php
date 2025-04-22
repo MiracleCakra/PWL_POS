@@ -3,14 +3,26 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-//use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
-use Illuminate\Foundation\Auth\User as Authenticatable; //implementasi class authenticatable
 
 class UserModel extends Authenticatable implements JWTSubject
 {
+    use HasFactory;
 
+    protected $table = 'm_user';  // Nama tabel
+    protected $primaryKey = 'user_id';  // Primary key
+
+    protected $fillable = [
+        'level_id',
+        'username',
+        'nama',
+        'password',
+        'created_at',
+        'updated_at'
+    ];
+
+    // JWT Methods
     public function getJWTIdentifier()
     {
         return $this->getKey();
@@ -21,18 +33,15 @@ class UserModel extends Authenticatable implements JWTSubject
         return [];
     }
 
-    use HasFactory;
+    // ✅ Relasi ke tabel level (pastikan nama tabel dan modelnya sesuai)
+    public function level()
+    {
+        return $this->belongsTo(LevelModel::class, 'level_id', 'level_id');
+    }
 
-    protected $table = 'm_user';  // Mendefinisikan nama tabel yang digunakan oleh model ini
-    protected $primaryKey = 'user_id';  // Mendefinisikan primary key dari tabel yang digunakan
-
-    protected $fillable = [
-        'level_id',
-        'username',
-        'nama',
-        'password',
-        'created_at',
-        'updated_at'
-    ];
+    // ✅ Mengambil level_kode dari relasi level
+    public function getRole()
+    {
+        return optional($this->level)->level_kode; // optional agar tidak error kalau level null
+    }
 }
-
