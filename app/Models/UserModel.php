@@ -33,13 +33,11 @@ class UserModel extends Authenticatable implements JWTSubject
         return [];
     }
 
-    // ✅ Relasi ke tabel level (pastikan nama tabel dan modelnya sesuai)
     public function level()
     {
         return $this->belongsTo(LevelModel::class, 'level_id', 'level_id');
     }
 
-    // ✅ Mengambil level_kode dari relasi level
     public function getRole()
     {
         return optional($this->level)->level_kode; // optional agar tidak error kalau level null

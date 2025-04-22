@@ -379,6 +379,6 @@ class KategoriController extends Controller
         $pdf->setOption("isRemoteEnabled", true);
         $pdf->render();
 
-        return $pdf->download('Data kategori ' . date('Y-m-d H:i:s') . '.pdf');
+        return $pdf->stream('Data kategori ' . date('Y-m-d H:i:s') . '.pdf');
     }
 }

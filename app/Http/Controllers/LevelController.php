@@ -414,6 +414,6 @@ class LevelController extends Controller
         $pdf->setOption("isRemoteEnabled", true);
         $pdf->render();
 
-        return $pdf->download('Data level ' . date('Y-m-d H:i:s') . '.pdf');
+        return $pdf->stream('Data level ' . date('Y-m-d H:i:s') . '.pdf');
     }
 }

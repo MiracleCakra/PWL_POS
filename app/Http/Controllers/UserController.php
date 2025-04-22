@@ -490,6 +490,6 @@ class UserController extends Controller
             $pdf->setOption("isRemoteEnabled", true);
             $pdf->render();
 
-            return $pdf->download('Data user ' . date('Y-m-d H:i:s') . '.pdf');
+            return $pdf->stream('Data user ' . date('Y-m-d H:i:s') . '.pdf');
         }
 }

@@ -410,6 +410,6 @@ class SupplierController extends Controller
         $pdf->setOption("isRemoteEnabled", true);
         $pdf->render();
 
-        return $pdf->download('Data supplier ' . date('Y-m-d H:i:s') . '.pdf');
+        return $pdf->stream('Data supplier ' . date('Y-m-d H:i:s') . '.pdf');
     }
 }

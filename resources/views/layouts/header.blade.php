@@ -145,7 +145,7 @@
                 <li class="nav-item dropdown me-6"> {{-- Item dropdown dalam navbar dengan margin kanan --}}
                     <a class="nav-link" data-toggle="dropdown" href="#" id="avatarDropdown">
                         {{-- Trigger dropdown --}}
-                        @if (auth()->user()->poto_profil)
+                        @if (auth()->user()->foto_profil)
                             {{-- Jika user punya foto profil --}}
                             <img src="{{ asset('storage/profile/' . auth()->user()->foto_profil) }}"
                                 class="img-circle elevation-2" alt="User Image" width="27" height="27">

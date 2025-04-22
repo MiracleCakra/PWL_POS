@@ -34,6 +34,7 @@ Route::middleware(['auth'])->group(function () {
 Route::post('/profile/update-avatar', [App\Http\Controllers\ProfileController::class, 'updateAvatar']);
 
 // Route User
+Route::middleware(['auth', 'authorize:ADM,MNG'])->group(function () {
 Route::group(['prefix' => 'user'], function () {
     Route::get('/', [UserController::class, 'index']);
     Route::get('/list', [UserController::class, 'list']);
@@ -50,6 +51,7 @@ Route::get('/import', [UserController::class, 'import']); // ajax form upload ex
 Route::post('/import_ajax', [UserController::class, 'import_ajax']); // ajax import excel
 Route::get('/export_excel', [UserController::class, 'export_excel']); // ajax export excel
 Route::get('/export_pdf', [UserController::class, 'export_pdf']); // export pdf
+    });
 });
 
 //Route Level
