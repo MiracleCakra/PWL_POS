@@ -3,8 +3,9 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Kesalahan</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                        aria-hidden="true">&times;</span></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
             <div class="modal-body">
                 <div class="alert alert-danger">
@@ -16,37 +17,26 @@
         </div>
     </div>
 @else
-    <form action="{{ url('/barang/' . $barang->barang_id . '/update_ajax') }}" method="POST" id="form-edit">
+    <form action="{{ url('/barang/' . $barang->barang_id . '/update_ajax') }}" method="POST" id="form-edit-barang">
         @csrf
         @method('PUT')
         <div id="modal-master" class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">Edit Data Barang</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                            aria-hidden="true">&times;</span></button>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
-                        <label>Kategori Barang</label>
-                        <select name="kategori_id" id="kategori_id" class="form-control" required>
-                            <option value="">- Pilih kategori -</option>
-                            @foreach ($kategori as $k)
-                                <option {{ $k->kategori_id == $barang->kategori_id ? 'selected' : '' }}
-                                    value="{{ $k->kategori_id }}">
-                                    {{ $k->kategori_nama }}</option>
-                            @endforeach
-                        </select>
-                        <small id="error-kategori_id" class="error-text form-text text-danger"></small>
-                    </div>
-                    <div class="form-group">
-                        <label>Kode</label>
+                        <label>Kode Barang</label>
                         <input value="{{ $barang->barang_kode }}" type="text" name="barang_kode" id="barang_kode"
                             class="form-control" required>
                         <small id="error-barang_kode" class="error-text form-text text-danger"></small>
                     </div>
                     <div class="form-group">
-                        <label>Nama</label>
+                        <label>Nama Barang</label>
                         <input value="{{ $barang->barang_nama }}" type="text" name="barang_nama" id="barang_nama"
                             class="form-control" required>
                         <small id="error-barang_nama" class="error-text form-text text-danger"></small>
@@ -73,15 +63,11 @@
     </form>
     <script>
         $(document).ready(function() {
-            $("#form-edit").validate({
+            $("#form-edit-barang").validate({
                 rules: {
-                    kategori_id: {
-                        required: true,
-                        number: true
-                    },
                     barang_kode: {
                         required: true,
-                        minlength: 3,
+                        minlength: 2,
                         maxlength: 10
                     },
                     barang_nama: {
@@ -91,17 +77,19 @@
                     },
                     harga_beli: {
                         required: true,
-                        number: true
+                        number: true,
+                        min: 0
                     },
                     harga_jual: {
                         required: true,
-                        number: true
-                    },
+                        number: true,
+                        min: 0
+                    }
                 },
                 submitHandler: function(form) {
                     $.ajax({
                         url: form.action,
-                        type: form.method,
+                        type: 'PUT',
                         data: $(form).serialize(),
                         success: function(response) {
                             if (response.status) {

@@ -10,6 +10,7 @@ use Illuminate\Validation\Rule;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Barryvdh\DomPDF\Facade\Pdf;
 
+
 class SupplierController extends Controller
 {
     public function index()
@@ -144,7 +145,7 @@ class SupplierController extends Controller
         }
         try {
             SupplierModel::destroy($id);
-            return redirect('/supplier')->with('success', 'Data supplier berhasil dihapus');
+            return redirect('/supplier')->with('  ', 'Data supplier berhasil dihapus');
         } catch (\Illuminate\Database\QueryException $e) {
             return redirect('/supplier')->with('error', 'Data supplier sedang digunakan');
         }
@@ -211,11 +212,32 @@ class SupplierController extends Controller
     public function update_ajax(Request $request, $id)
     {
         if ($request->ajax() || $request->wantsJson()) {
+            // Cari data sup[lier
+            $supplier = SupplierModel::find($id);
+            if (!$supplier) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Data tidak ditemukan'
+                ]);
+            }
+
+            // Aturan validasi
             $rules = [
-                'nama_supplier' => 'required|string|max:100',
-                'kontak' => 'required|string|max:50',
-                'alamat' => 'required|string|max:200'
+                'kontak' => ['required', 'string', 'max:50'],
+                'alamat' => ['required', 'string', 'max:200']
             ];
+
+            // Validasi nama_supplier unik hanya jika diubah
+            if ($request->nama_supplier !== $supplier->nama_supplier) {
+                $rules['nama_supplier'] = [
+                    'required',
+                    'string',
+                    'max:100',
+                    Rule::unique('m_supplier', 'nama_supplier')
+                ];
+            } else {
+                $rules['nama_supplier'] = ['required', 'string', 'max:100'];
+            }
 
             $validator = Validator::make($request->all(), $rules);
 
@@ -227,20 +249,15 @@ class SupplierController extends Controller
                 ]);
             }
 
-            $check = SupplierModel::find($id);
-            if ($check) {
-                $check->update($request->all());
-                return response()->json([
-                    'status' => true,
-                    'message' => 'Data berhasil diupdate'
-                ]);
-            } else {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Data tidak ditemukan'
-                ]);
-            }
+            // Update data
+            $supplier->update($request->only(['nama_supplier', 'kontak', 'alamat']));
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Data supplier berhasil diupdate'
+            ]);
         }
+
         return redirect('/supplier');
     }
 

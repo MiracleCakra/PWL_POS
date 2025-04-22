@@ -162,19 +162,24 @@ class KategoriController extends Controller
                 ]);
             }
 
+            // Aturan validasi
             $rules = [
-                'kategori_kode' => [
-                    'sometimes',
+                'kategori_nama' => ['required', 'string', 'max:100'],
+            ];
+
+            // Tambahkan validasi unique hanya jika kategori_kode diubah
+            if ($request->kategori_kode !== $kategori->kategori_kode) {
+                $rules['kategori_kode'] = [
                     'required',
                     'string',
                     'max:10',
-                    Rule::unique('m_kategori', 'kategori_kode')->ignore($id, 'kategori_id')
-                ],
-                'kategori_nama' => 'sometimes|required|string|max:100'
-            ];
+                    Rule::unique('m_kategori', 'kategori_kode')
+                ];
+            } else {
+                $rules['kategori_kode'] = ['required', 'string', 'max:10'];
+            }
 
             $validator = Validator::make($request->all(), $rules);
-
             if ($validator->fails()) {
                 return response()->json([
                     'status' => false,
@@ -183,7 +188,7 @@ class KategoriController extends Controller
                 ]);
             }
 
-            // Update hanya jika ada perubahan
+            // Update data
             $kategori->update($request->only(['kategori_kode', 'kategori_nama']));
 
             return response()->json([

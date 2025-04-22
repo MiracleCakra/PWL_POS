@@ -61,7 +61,7 @@
                         </div>
                     </div>
 
-                    {{-- Harga Beli --}}
+                    {{--     Beli --}}
                     <div class="form-group row">
                         <label class="col-2 control-label col-form-label">Harga Beli</label>
                         <div class="col-10">

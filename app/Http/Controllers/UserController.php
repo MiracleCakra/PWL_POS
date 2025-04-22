@@ -9,6 +9,7 @@ use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
@@ -275,43 +276,61 @@ class UserController extends Controller
 
     public function update_ajax(Request $request, $id)
     {
-        // cek apakah request dari ajax
         if ($request->ajax() || $request->wantsJson()) {
-            $rules = [
-                'level_id' => 'required|integer',
-                'username' => 'required|max:20|unique:m_user,username,' . $id . ',user_id',
-                'nama' => 'required|max:100',
-                'password' => 'nullable|min:6|max:20'
-            ];
-            // use Illuminate\Support\Facades\Validator;
-            $validator = Validator::make($request->all(), $rules);
-
-            if ($validator->fails()) {
-                return response()->json([
-                    'status' => false,    // respon json, true: berhasil, false: gagal
-                    'message' => 'Validasi gagal.',
-                    'msgField' => $validator->errors()  // menunjukkan field mana yang error
-                ]);
-            }
-
-            $check = UserModel::find($id);
-            if ($check) {
-                if (!$request->filled('password')) { // jika password tidak diisi, maka hapus dari request
-                    $request->request->remove('password');
-                }
-
-                $check->update($request->all());
-                return response()->json([
-                    'status' => true,
-                    'message' => 'Data berhasil diupdate'
-                ]);
-            } else {
+            // Cek apakah user ada
+            $user = UserModel::find($id);
+            if (!$user) {
                 return response()->json([
                     'status' => false,
                     'message' => 'Data tidak ditemukan'
                 ]);
             }
+
+            // Aturan validasi
+            $rules = [
+                'level_id' => ['required', 'integer'],
+                'nama' => ['required', 'max:100'],
+                'password' => ['nullable', 'min:6', 'max:20']
+            ];
+
+            // Validasi unique hanya jika username berubah
+            if ($request->username !== $user->username) {
+                $rules['username'] = [
+                    'required',
+                    'max:20',
+                    Rule::unique('m_user', 'username')
+                ];
+            } else {
+                $rules['username'] = ['required', 'max:20'];
+            }
+
+            // Validasi data
+            $validator = Validator::make($request->all(), $rules);
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Validasi gagal.',
+                    'msgField' => $validator->errors()
+                ]);
+            }
+
+            // Siapkan data yang akan diupdate
+            $dataUpdate = $request->only(['level_id', 'username', 'nama']);
+
+            // Jika password diisi, hash dan tambahkan ke update
+            if ($request->filled('password')) {
+                $dataUpdate['password'] = Hash::make($request->password);
+            }
+
+            // Lakukan update
+            $user->update($dataUpdate);
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Data user berhasil diupdate'
+            ]);
         }
+
         return redirect('/user');
     }
 
@@ -339,7 +358,7 @@ class UserController extends Controller
                 ]);
             }
         }
-        return redirect('/user');
+        return redirect('/window');
     }
 
     public function import()

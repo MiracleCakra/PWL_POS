@@ -23,7 +23,7 @@
                         <label class="col-2 control-label col-form-label">Level Code</label>
                         <div class="col-10">
                             <input type="text" class="form-control" id="level_kode" name="level_kode"
-                                value="{{ old('level_kode', $level->level_code) }}" required>
+                                value="{{ old('level_kode', $level->level_kode) }}" required>
                             @error('level_kode')
                                 <small class="form-text text-danger">{{ $message }}</small>
                             @enderror
