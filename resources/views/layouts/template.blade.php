@@ -79,65 +79,390 @@
                 </button>
             </div>
 
-            <!-- Form Upload Foto -->
-            <form id="avatarForm" enctype="multipart/form-data"> {{-- Form upload foto dengan enctype khusus untuk file --}}
-                @csrf
+            <!-- Body Modal -->
+            <style>
+                .avatar-upload-container {
+                  font-family: 'Poppins', sans-serif;
+                  max-width: 550px;
+                  margin: 0 auto;
+                  padding: 20px;
+                }
 
-                <!-- Body Modal -->
-                <div class="modal-body">
+                .upload-header {
+                  text-align: center;
+                  margin-bottom: 30px;
+                }
 
-                    <!-- Preview Foto Lama & Baru -->
-                    <div class="text-center mb-4">
-                        <div class="preview-container">
-                            <div class="row">
-                                <div class="col-6 text-center border-right">
-                                    {{-- Foto saat ini --}}
-                                    <p class="text-muted mb-2">Foto Saat Ini</p>
-                                    @if (auth()->user()->foto_profil)
-                                        <img src="{{ asset('storage/profile/' . auth()->user()->foto_profil) }}"
-                                            class="img-circle elevation-2" alt="Current Avatar" width="120"
-                                            height="120">
-                                    @else
-                                        <img src="{{ asset('adminlte/dist/img/avatar.png') }}"
-                                            class="img-circle elevation-2" alt="Current Avatar" width="120"
-                                            height="120">
-                                    @endif
-                                </div>
-                                <div class="col-6 text-center">
-                                    {{-- Preview foto baru yang akan diunggah --}}
-                                    <p class="text-muted mb-2">Foto Baru</p>
-                                    <img src="{{ asset('storage/profile/image.png') }}" class="img-circle elevation-2"
-                                        alt="New Avatar" id="avatarPreview" width="120" height="120">
-                                </div>
-                            </div>
+                .upload-header h5 {
+                  font-weight: 600;
+                  color: #333;
+                  margin-bottom: 10px;
+                }
+
+                .upload-header p {
+                  color: #6c757d;
+                  font-size: 14px;
+                }
+
+                .preview-container {
+                  display: flex;
+                  justify-content: space-around;
+                  align-items: center;
+                  margin-bottom: 30px;
+                  padding: 15px 0;
+                  background-color: #f8f9fa;
+                  border-radius: 10px;
+                }
+
+                .preview-box {
+                  display: flex;
+                  flex-direction: column;
+                  align-items: center;
+                  padding: 10px;
+                  width: 45%;
+                }
+
+                .preview-box p {
+                  margin-bottom: 10px;
+                  font-weight: 500;
+                  color: #495057;
+                }
+
+                .avatar-circle {
+                  width: 120px;
+                  height: 120px;
+                  border-radius: 50%;
+                  object-fit: cover;
+                  border: 3px solid #fff;
+                  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+                }
+
+                .preview-divider {
+                  width: 1px;
+                  height: 120px;
+                  background-color: #dee2e6;
+                }
+
+                .drop-zone {
+                  display: flex;
+                  flex-direction: column;
+                  align-items: center;
+                  justify-content: center;
+                  border: 2px dashed #adb5bd;
+                  border-radius: 8px;
+                  padding: 20px;
+                  text-align: center;
+                  background-color: #f8f9fa;
+                  cursor: pointer;
+                  margin-bottom: 15px;
+                }
+
+                .drop-zone:hover {
+                  border-color: #007bff;
+                  background-color: #f1f8ff;
+                }
+
+                .drop-zone-active {
+                  border-color: #28a745;
+                  background-color: #f0fff4;
+                }
+
+                .drop-zone i {
+                  font-size: 32px;
+                  color: #6c757d;
+                  margin-bottom: 10px;
+                }
+
+                .drop-zone-text {
+                  color: #495057;
+                  font-weight: 500;
+                  margin-bottom: 8px;
+                }
+
+                .drop-zone-hint {
+                  color: #6c757d;
+                  font-size: 13px;
+                }
+
+                .file-input {
+                  display: none;
+                }
+
+                .file-info {
+                  display: flex;
+                  align-items: center;
+                  font-size: 14px;
+                  color: #6c757d;
+                  padding: 8px;
+                  background: #fff;
+                  border-radius: 6px;
+                  margin-bottom: 15px;
+                }
+
+                .file-info i {
+                  margin-right: 8px;
+                }
+
+                .btn-container {
+                  display: flex;
+                  justify-content: flex-end;
+                  gap: 10px;
+                  margin-top: 15px;
+                }
+
+                .btn {
+                  padding: 8px 16px;
+                  border-radius: 6px;
+                  font-weight: 500;
+                }
+
+                .btn-cancel {
+                  background-color: #fff;
+                  color: #6c757d;
+                  border: 1px solid #ced4da;
+                }
+
+                .btn-cancel:hover {
+                  background-color: #f8f9fa;
+                }
+
+                .btn-save {
+                  background-color: #007bff;
+                  color: white;
+                  border: none;
+                }
+
+                .btn-save:hover {
+                  background-color: #0069d9;
+                }
+
+                .alert-error {
+                  color: #721c24;
+                  background-color: #f8d7da;
+                  border: 1px solid #f5c6cb;
+                  border-radius: 6px;
+                  padding: 10px;
+                  margin-top: 10px;
+                  display: none;
+                }
+
+                .progress-bar-container {
+                  height: 6px;
+                  width: 100%;
+                  background-color: #e9ecef;
+                  border-radius: 3px;
+                  overflow: hidden;
+                  margin-bottom: 15px;
+                  display: none;
+                }
+
+                .progress-bar {
+                  height: 100%;
+                  background-color: #007bff;
+                  border-radius: 3px;
+                  width: 0%;
+                }
+
+                @keyframes pulse {
+                  0% { transform: scale(1); }
+                  50% { transform: scale(1.05); }
+                  100% { transform: scale(1); }
+                }
+
+                .avatar-highlight {
+                  animation: pulse 1s ease-in-out;
+                }
+                </style>
+
+                <form id="avatarForm" enctype="multipart/form-data" class="avatar-upload-container">
+                    @csrf
+
+                    <div class="upload-header">
+                        <h5>Perbarui Foto Profil</h5>
+                        <p>Pilih foto untuk profil baru Anda</p>
+                    </div>
+
+                    <div class="preview-container">
+                        <div class="preview-box">
+                            <p>Foto Saat Ini</p>
+                            @if (auth()->user()->foto_profil)
+                                <img src="{{ asset('storage/profile/' . auth()->user()->foto_profil) }}"
+                                    class="avatar-circle" alt="Foto Saat Ini" id="currentAvatar">
+                            @else
+                                <img src="{{ asset('adminlte/dist/img/avatar.png') }}"
+                                    class="avatar-circle" alt="Foto Default" id="currentAvatar">
+                            @endif
+                        </div>
+
+                        <div class="preview-divider"></div>
+
+                        <div class="preview-box">
+                            <p>Foto Baru</p>
+                            <img src="{{ asset('adminlte/dist/img/avatar.png') }}" class="avatar-circle"
+                                alt="Foto Baru" id="avatarPreview">
                         </div>
                     </div>
 
-                    <!-- Input File -->
-                    <div class="form-group mt-3">
-                        <div class="custom-file">
-                            <input type="file" class="custom-file-input" id="avatarInput" name="photo"
-                                accept="image/*"> {{-- Input file untuk memilih foto baru --}}
-                            <label class="custom-file-label" for="avatarInput">Pilih file</label>
-                        </div>
-                        <small class="form-text text-muted">Format yang didukung: JPG, JPEG, PNG. Maksimum 2MB.</small>
+                    <div class="drop-zone" id="dropZone">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <p class="drop-zone-text">Tarik & lepas foto di sini</p>
+                        <p class="drop-zone-hint">- atau -</p>
+                        <button type="button" class="btn btn-outline-primary" id="browseBtn">Pilih File</button>
+                        <input type="file" class="file-input" id="avatarInput" name="photo" accept="image/*">
                     </div>
 
-                    <!-- Alert Error -->
-                    <div class="alert alert-danger d-none" id="avatarError"></div> {{-- Tempat menampilkan error upload --}}
-                </div>
+                    <div class="file-info" id="fileInfo" style="display: none;">
+                        <i class="fas fa-file-image"></i>
+                        <span id="fileName">Tidak ada file dipilih</span>
+                    </div>
 
-                <!-- Footer Modal -->
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-primary" id="saveAvatar">Simpan</button> {{-- Tombol simpan perubahan --}}
-                </div>
+                    <div class="progress-bar-container" id="progressContainer">
+                        <div class="progress-bar" id="progressBar"></div>
+                    </div>
 
-            </form>
-        </div>
-    </div>
-</div>
+                    <div class="alert-error" id="avatarError"></div>
 
+                    <div class="btn-container">
+                        <button type="button" class="btn btn-cancel" data-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-save" id="saveAvatar">
+                            <i class="fas fa-save mr-1"></i> Simpan
+                        </button>
+                    </div>
+                </form>
+
+                <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    // Inisialisasi elemen-elemen DOM
+                    const dropZone = document.getElementById('dropZone');
+                    const fileInput = document.getElementById('avatarInput');
+                    const browseBtn = document.getElementById('browseBtn');
+                    const avatarPreview = document.getElementById('avatarPreview');
+                    const fileName = document.getElementById('fileName');
+                    const fileInfo = document.getElementById('fileInfo');
+                    const errorAlert = document.getElementById('avatarError');
+                    const progressContainer = document.getElementById('progressContainer');
+                    const progressBar = document.getElementById('progressBar');
+                    const saveBtn = document.getElementById('saveAvatar');
+
+                    // Penanganan klik tombol browse
+                    browseBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        fileInput.click();
+                    });
+
+                    // Penanganan pemilihan file
+                    fileInput.addEventListener('change', handleFileSelect);
+
+                    // Penanganan drag and drop
+                    dropZone.addEventListener('dragover', function(e) {
+                        e.preventDefault();
+                        dropZone.classList.add('drop-zone-active');
+                    });
+
+                    dropZone.addEventListener('dragleave', function() {
+                        dropZone.classList.remove('drop-zone-active');
+                    });
+
+                    dropZone.addEventListener('drop', function(e) {
+                        e.preventDefault();
+                        dropZone.classList.remove('drop-zone-active');
+
+                        if (e.dataTransfer.files.length) {
+                            fileInput.files = e.dataTransfer.files;
+                            handleFileSelect();
+                        }
+                    });
+
+                    // Penanganan submit form
+                    document.getElementById('avatarForm').addEventListener('submit', function(e) {
+                        e.preventDefault();
+
+                        if (!fileInput.files.length) {
+                            showError('Silakan pilih foto terlebih dahulu.');
+                            return;
+                        }
+
+                        // Simulasi upload dengan progress bar
+                        simulateUpload();
+                    });
+
+                    // untuk menangani pemilihan file
+                    function handleFileSelect() {
+                        const file = fileInput.files[0];
+
+                        if (!file) return;
+
+                        // Periksa tipe file
+                        const fileType = file.type;
+                        const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+
+                        if (!validTypes.includes(fileType)) {
+                            showError('Format file tidak valid. Gunakan JPG, JPEG, atau PNG.');
+                            resetFileInput();
+                            return;
+                        }
+
+                        // Periksa ukuran file (maks 2MB)
+                        if (file.size > 2 * 1024 * 1024) {
+                            showError('Ukuran file terlalu besar. Maksimal 2MB.');
+                            resetFileInput();
+                            return;
+                        }
+
+                        // Tampilkan pratinjau gambar
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            avatarPreview.src = e.target.result;
+                            avatarPreview.classList.add('avatar-highlight');
+                            setTimeout(() => {
+                                avatarPreview.classList.remove('avatar-highlight');
+                            }, 1000);
+                        }
+                        reader.readAsDataURL(file);
+
+                        // Tampilkan info file
+                        fileName.textContent = file.name;
+                        fileInfo.style.display = 'flex';
+
+                        // Sembunyikan pesan error jika ada
+                        errorAlert.style.display = 'none';
+                    }
+
+                    // untuk mereset input file
+                    function resetFileInput() {
+                        fileInput.value = '';
+                        fileInfo.style.display = 'none';
+                        avatarPreview.src = '{{ asset("adminlte/dist/img/avatar.png") }}';
+                    }
+
+                    // untuk menampilkan pesan error
+                    function showError(message) {
+                        errorAlert.textContent = message;
+                        errorAlert.style.display = 'block';
+                    }
+
+                    // untuk mensimulasikan upload
+                    function simulateUpload() {
+                        // Tampilkan progress bar
+                        progressContainer.style.display = 'block';
+                        saveBtn.disabled = true;
+
+                        let progress = 0;
+                        const interval = setInterval(() => {
+                            progress += 10;
+                            progressBar.style.width = progress + '%';
+
+                            if (progress >= 100) {
+                                clearInterval(interval);
+                                setTimeout(() => {
+                                    progressContainer.style.display = 'none';
+                                    saveBtn.disabled = false;
+                                }, 500);
+                            }
+                        }, 100);
+                    }
+                });
+                </script>
 <!-- jQuery -->
 <script src="{{ asset('adminlte/plugins/jquery/jquery.min.js') }}"></script>
 
