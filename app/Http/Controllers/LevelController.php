@@ -273,7 +273,6 @@ class LevelController extends Controller
             'level' => $level
         ]);
     }
-
     public function delete_ajax(Request $request, $id)
     {
         if ($request->ajax() || $request->wantsJson()) {

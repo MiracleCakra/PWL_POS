@@ -79,7 +79,7 @@
                                 timer: 1500,
                                 showConfirmButton: false
                             }).then(() => {
-                                window.location.reload(); // reload seluruh halaman
+                                window.location.reload();
                             });
                         } else {
                             $('.error-text').text('');

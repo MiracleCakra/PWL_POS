@@ -286,7 +286,7 @@ class SupplierController extends Controller
                 ]);
             }
         }
-        return redirect('/supplier');
+        return redirect('/welcome');
     }
 
     public function import()
