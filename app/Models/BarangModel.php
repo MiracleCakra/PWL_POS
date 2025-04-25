@@ -2,26 +2,34 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class BarangModel extends Model
 {
-    use hasFactory;
     protected $table = 'm_barang';
     protected $primaryKey = 'barang_id';
 
-    //protected $fillable = ['barang_id', 'barang_kode', 'barang_nama', 'harga_beli', 'harga_jual', 'stok'];
-
     protected $fillable = [
+        'barang_id',
         'barang_kode',
         'barang_nama',
         'harga_beli',
         'harga_jual',
-        'kategori_id'
+        'kategori_id',
+        'image' // menambahkan kolom baru untuk gambar
     ];
-    public function kategori()
+
+    public function kategori(): BelongsTo
     {
         return $this->belongsTo(KategoriModel::class, 'kategori_id', 'kategori_id');
+    }
+
+    protected function image(): Attribute
+    {
+        return Attribute::make(
+            get: fn($image) => $image ? asset('storage/barang/' . $image) : null,
+        );
     }
 }
