@@ -27,6 +27,8 @@ use Illuminate\Support\Facades\Route;
 
 // route register
 Route::post('/register', App\Http\Controllers\Api\RegisterController::class)->name('register'); //[RegisterController::class, 'register']);
+Route::post('/register1', App\Http\Controllers\Api\RegisterController::class)->name('register1'); //[RegisterController::class, 'register1']);
+
 
 // route login
 Route::post('/login', App\Http\Controllers\Api\LoginController::class)->name('login');
